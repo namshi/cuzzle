@@ -1,16 +1,19 @@
 {
-    "name": "namshi/gurl",
+    "name": "namshi/cuzzle",
     "description": "Get the cURL shell command from a Guzzle request",
     "require": {
+        "php": ">=5.4.0",
         "guzzlehttp/guzzle": "4.*"
     },
     "require-dev": {
         "ext-curl": "*",
-        "phpunit/phpunit": "4.2.2"
+        "phpunit/phpunit": "4.2.2",
+        "guzzlehttp/guzzle": "4.2.1",
+        "monolog/monolog": "1.10.0"
     },
     "autoload": {
         "psr-4": {
-            "": "src/"
+            "Namshi\\Cuzzle\\": "src/"
         }
     },
     "license": "MIT",
@@ -18,6 +21,10 @@
         {
             "name": "cirpo",
             "email": "alessandro.cinelli@gmail.com"
+        },
+        {
+            "name": "Nikita Nefedov",
+            "email": "inefedor@gmail.com"
         }
     ]
 }
