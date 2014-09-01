@@ -49,7 +49,8 @@ $client->getEmitter()->attach(new CurlFormatterSubscriber($logger)); //add the c
 
 $response = $client->get('http://google.com'); //let's fire a request
 
-var_dump($testHandler->getRecords()); //check the cURL request in the logs, you should see curl 'http://google.com' -H 'User-Agent: Guzzle/4.2.1 curl/7.37.1 PHP/5.5.16
+var_dump($testHandler->getRecords()); //check the cURL request in the logs, 
+//you should see something like: "curl 'http://google.com' -H 'User-Agent: Guzzle/4.2.1 curl/7.37.1 PHP/5.5.16"
 
 ```
 
