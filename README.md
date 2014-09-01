@@ -8,7 +8,7 @@ This library let's you dump a Guzzle request to a cURL command for debug and log
 
 This library needs PHP 5.4+.
 
-It has been tested using PHP5.3 to PHP5.6 and HHVM.
+It has been tested using PHP5.4 to PHP5.6 and HHVM.
 
 ## Installation
 
