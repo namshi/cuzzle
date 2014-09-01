@@ -14,7 +14,7 @@ It has been tested using PHP5.4 to PHP5.6 and HHVM.
 
 You can install the library directly with composer:
 ```
-"namshi\cuzzle": "0.1.0"
+"namshi/cuzzle": "0.1.0"
 ```
 
 
@@ -40,7 +40,7 @@ use Namshi\Cuzzle\Subscriber\CurlFormatterSubscriber;
 use Monolog\Logger;
 use Monolog\Handler\TestHandler;
 
-$logger = new Logger('guzzele.to.curl'); //initialize the logger
+$logger = new Logger('guzzle.to.curl'); //initialize the logger
 $testHandler = new TestHandler(); //test logger handler
 $logger->pushHandler($testHandler);
 
