@@ -14,7 +14,7 @@ It has been tested using PHP5.4 to PHP5.6 and HHVM.
 
 You can install the library directly with composer:
 ```
-"namshi/cuzzle": "0.1.0"
+"namshi/cuzzle": "0.1.1"
 ```
 
 
