@@ -32,6 +32,6 @@ class CurlFormatterSubscriber implements SubscriberInterface
     public function onBefore(BeforeEvent $event)
     {
         $curlCommand = (new CurlFormatter())->format($event->getRequest());
-        $this->logger->info($curlCommand);
+        $this->logger->debug($curlCommand);
     }
 }
