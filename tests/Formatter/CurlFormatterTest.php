@@ -107,4 +107,15 @@ class CurlFormatterTest extends \PHPUnit_Framework_TestCase
         $this->assertContains("-d 'foo=bar&hello=world'", $curl);
         $this->assertContains("-X PUT", $curl);
     }
+
+    public function testProperBodyReading()
+    {
+        $request = new Request('PUT', 'example.local', [], Stream::factory('foo=bar&hello=world'));
+        $request->getBody()->getContents();
+
+        $curl    = $this->curlFormatter->format($request);
+
+        $this->assertContains("-d 'foo=bar&hello=world'", $curl);
+        $this->assertContains("-X PUT", $curl);
+    }
 }
