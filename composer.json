@@ -3,7 +3,7 @@
     "description": "Get the cURL shell command from a Guzzle request",
     "require": {
         "php": ">=5.4.0",
-        "guzzlehttp/guzzle": "4.*"
+        "guzzlehttp/guzzle": "4.*|5.*"
     },
     "require-dev": {
         "ext-curl": "*",
