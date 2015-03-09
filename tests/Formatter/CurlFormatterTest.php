@@ -17,6 +17,16 @@ class CurlFormatterTest extends \PHPUnit_Framework_TestCase
         $this->curlFormatter = new CurlFormatter();
     }
 
+    public function testMultiLineDisabled()
+    {
+        $this->curlFormatter->setCommandLineLength(10);
+
+        $request = new Request('GET', 'example.local', ['foo' => 'bar']);
+        $curl    = $this->curlFormatter->format($request);
+
+        $this->assertEquals(substr_count($curl, "\n"), 2);
+    }
+
     public function testSkipHostInHeaders()
     {
         $request = new Request('GET', 'example.local');

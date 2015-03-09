@@ -14,8 +14,6 @@ use GuzzleHttp\Url;
  */
 class CurlFormatter
 {
-    const COMMAND_LINE_LENGTH_LIMIT = 100;
-
     /**
      * @var string
      */
@@ -32,6 +30,19 @@ class CurlFormatter
     protected $options;
 
     /**
+     * @var int
+     */
+    protected $commandLineLength;
+
+    /**
+     * @param int $commandLineLength
+     */
+    function __construct($commandLineLength =  100)
+    {
+        $this->commandLineLength = $commandLineLength;
+    }
+
+    /**
      * @param RequestInterface $request
      * @return string
      */
@@ -45,6 +56,14 @@ class CurlFormatter
         $this->addOptionsToCommand();
 
         return $this->command;
+    }
+
+    /**
+     * @param int $commandLineLength
+     */
+    public function setCommandLineLength($commandLineLength)
+    {
+        $this->commandLineLength = $commandLineLength;
     }
 
     /**
@@ -72,7 +91,7 @@ class CurlFormatter
     {
         $this->command .= ' ';
 
-        if ($this->currentLineLength + strlen($part) > self::COMMAND_LINE_LENGTH_LIMIT) {
+        if ($this->commandLineLength > 0 && $this->currentLineLength + strlen($part) > $this->commandLineLength) {
             $this->currentLineLength = 0;
             $this->command .= "\\\n  ";
         }
