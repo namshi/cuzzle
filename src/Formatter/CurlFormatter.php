@@ -119,7 +119,7 @@ class CurlFormatter
      */
     protected function extractBodyArgument(RequestInterface $request)
     {
-        if ($request->getBody() && $contents = $request->getBody()->getContents()) {
+        if ($request->getBody() && $contents = (string) $request->getBody()) {
             $this->addOption('d', escapeshellarg($contents));
         }
     }
