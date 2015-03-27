@@ -122,6 +122,11 @@ class CurlFormatter
         if ($request->getBody() && $contents = (string) $request->getBody()) {
             $this->addOption('d', escapeshellarg($contents));
         }
+
+        //if get request has data Add G otherwise curl will make a post request
+        if (!empty($this->options['d']) && ('GET' === $request->getMethod())){
+            $this->addOption('G');
+        }
     }
 
     /**
