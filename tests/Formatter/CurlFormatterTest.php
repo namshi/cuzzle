@@ -94,6 +94,7 @@ class CurlFormatterTest extends \PHPUnit_Framework_TestCase
         $curl    = $this->curlFormatter->format($request);
 
         $this->assertContains("-d 'foo=bar&hello=world'", $curl);
+        $this->assertNotContains(" -G ", $curl);
     }
 
     public function testHEAD()
