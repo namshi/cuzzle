@@ -71,6 +71,17 @@ class CurlFormatterTest extends \PHPUnit_Framework_TestCase
         $curl = $this->curlFormatter->format($request);
 
         $this->assertEquals("curl 'http://example.local?foo=bar'", $curl);
+
+        //Guzzle internally uses PostBody, when data is added to GET request
+        $body = new PostBody();
+        $body->setField('foo', 'bar');
+        $body->setField('hello', 'world');
+
+        $request = new Request('GET', 'example.local',[],$body);
+        $curl    = $this->curlFormatter->format($request);
+
+        $this->assertEquals("curl 'http://example.local' -G  -d 'foo=bar&hello=world'",$curl);
+
     }
 
     public function testPOST()
