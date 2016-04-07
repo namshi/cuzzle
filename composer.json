@@ -2,14 +2,12 @@
     "name": "namshi/cuzzle",
     "description": "Get the cURL shell command from a Guzzle request",
     "require": {
-        "php": ">=5.4.0",
-        "guzzlehttp/guzzle": "4.*|5.*"
+        "php": ">=5.5.0",
+        "guzzlehttp/guzzle": "^6.0",
+        "psr/log": "^1.0"
     },
     "require-dev": {
-        "ext-curl": "*",
-        "phpunit/phpunit": "4.2.2",
-        "guzzlehttp/guzzle": "4.2.1",
-        "monolog/monolog": "1.10.0"
+        "phpunit/phpunit": "^4.2.2"
     },
     "autoload": {
         "psr-4": {
@@ -26,5 +24,10 @@
             "name": "Nikita Nefedov",
             "email": "inefedor@gmail.com"
         }
-    ]
+    ],
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.0.x-dev"
+        }
+    }
 }

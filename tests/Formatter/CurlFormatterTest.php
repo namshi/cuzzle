@@ -1,9 +1,7 @@
 <?php
 
 use Namshi\Cuzzle\Formatter\CurlFormatter;
-use GuzzleHttp\Message\Request;
-use GuzzleHttp\Post\PostBody;
-use GuzzleHttp\Stream\Stream;
+use GuzzleHttp\Psr7\Request;
 
 class CurlFormatterTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,7 +19,7 @@ class CurlFormatterTest extends \PHPUnit_Framework_TestCase
     {
         $this->curlFormatter->setCommandLineLength(10);
 
-        $request = new Request('GET', 'example.local', ['foo' => 'bar']);
+        $request = new Request('GET', 'http://example.local', ['foo' => 'bar']);
         $curl    = $this->curlFormatter->format($request);
 
         $this->assertEquals(substr_count($curl, "\n"), 2);
@@ -29,7 +27,7 @@ class CurlFormatterTest extends \PHPUnit_Framework_TestCase
 
     public function testSkipHostInHeaders()
     {
-        $request = new Request('GET', 'example.local');
+        $request = new Request('GET', 'http://example.local');
         $curl    = $this->curlFormatter->format($request);
 
         $this->assertEquals("curl 'http://example.local'", $curl);
@@ -37,7 +35,7 @@ class CurlFormatterTest extends \PHPUnit_Framework_TestCase
 
     public function testSimpleGET()
     {
-        $request = new Request('GET', 'example.local');
+        $request = new Request('GET', 'http://example.local');
         $curl    = $this->curlFormatter->format($request);
 
         $this->assertEquals("curl 'http://example.local'", $curl);
@@ -45,7 +43,7 @@ class CurlFormatterTest extends \PHPUnit_Framework_TestCase
 
     public function testSimpleGETWithHeader()
     {
-        $request = new Request('GET', 'example.local', ['foo' => 'bar']);
+        $request = new Request('GET', 'http://example.local', ['foo' => 'bar']);
         $curl    = $this->curlFormatter->format($request);
 
         $this->assertEquals("curl 'http://example.local' -H 'foo: bar'", $curl);
@@ -53,7 +51,7 @@ class CurlFormatterTest extends \PHPUnit_Framework_TestCase
 
     public function testSimpleGETWithMultipleHeader()
     {
-        $request = new Request('GET', 'example.local', ['foo' => 'bar', 'Accept-Encoding' => 'gzip,deflate,sdch']);
+        $request = new Request('GET', 'http://example.local', ['foo' => 'bar', 'Accept-Encoding' => 'gzip,deflate,sdch']);
         $curl    = $this->curlFormatter->format($request);
 
         $this->assertEquals("curl 'http://example.local' -H 'foo: bar' -H 'Accept-Encoding: gzip,deflate,sdch'", $curl);
@@ -61,23 +59,19 @@ class CurlFormatterTest extends \PHPUnit_Framework_TestCase
 
     public function testGETWithQueryString()
     {
-        $request = new Request('GET', 'example.local?foo=bar');
+        $request = new Request('GET', 'http://example.local?foo=bar');
         $curl    = $this->curlFormatter->format($request);
 
         $this->assertEquals("curl 'http://example.local?foo=bar'", $curl);
 
-        $request = new Request('GET', 'example.local');
-        $request->getQuery()->set('foo', 'bar');
+        $request = new Request('GET', 'http://example.local?foo=bar');
         $curl = $this->curlFormatter->format($request);
 
         $this->assertEquals("curl 'http://example.local?foo=bar'", $curl);
 
-        //Guzzle internally uses PostBody, when data is added to GET request
-        $body = new PostBody();
-        $body->setField('foo', 'bar');
-        $body->setField('hello', 'world');
+        $body = \GuzzleHttp\Psr7\stream_for(http_build_query(['foo' => 'bar', 'hello' => 'world'], '', '&'));
 
-        $request = new Request('GET', 'example.local',[],$body);
+        $request = new Request('GET', 'http://example.local',[],$body);
         $curl    = $this->curlFormatter->format($request);
 
         $this->assertEquals("curl 'http://example.local' -G  -d 'foo=bar&hello=world'",$curl);
@@ -86,11 +80,9 @@ class CurlFormatterTest extends \PHPUnit_Framework_TestCase
 
     public function testPOST()
     {
-        $body = new PostBody();
-        $body->setField('foo', 'bar');
-        $body->setField('hello', 'world');
+        $body = \GuzzleHttp\Psr7\stream_for(http_build_query(['foo' => 'bar', 'hello' => 'world'], '', '&'));
 
-        $request = new Request('POST', 'example.local', [], $body);
+        $request = new Request('POST', 'http://example.local', [], $body);
         $curl    = $this->curlFormatter->format($request);
 
         $this->assertContains("-d 'foo=bar&hello=world'", $curl);
@@ -99,7 +91,7 @@ class CurlFormatterTest extends \PHPUnit_Framework_TestCase
 
     public function testHEAD()
     {
-        $request = new Request('HEAD', 'example.local');
+        $request = new Request('HEAD', 'http://example.local');
         $curl    = $this->curlFormatter->format($request);
 
         $this->assertContains("--head", $curl);
@@ -107,7 +99,7 @@ class CurlFormatterTest extends \PHPUnit_Framework_TestCase
 
     public function testOPTIONS()
     {
-        $request = new Request('OPTIONS', 'example.local');
+        $request = new Request('OPTIONS', 'http://example.local');
         $curl    = $this->curlFormatter->format($request);
 
         $this->assertContains("-X OPTIONS", $curl);
@@ -115,7 +107,7 @@ class CurlFormatterTest extends \PHPUnit_Framework_TestCase
 
     public function testDELETE()
     {
-        $request = new Request('DELETE', 'example.local/users/4');
+        $request = new Request('DELETE', 'http://example.local/users/4');
         $curl    = $this->curlFormatter->format($request);
 
         $this->assertContains("-X DELETE", $curl);
@@ -123,7 +115,7 @@ class CurlFormatterTest extends \PHPUnit_Framework_TestCase
 
     public function testPUT()
     {
-        $request = new Request('PUT', 'example.local', [], Stream::factory('foo=bar&hello=world'));
+        $request = new Request('PUT', 'http://example.local', [], \GuzzleHttp\Psr7\stream_for('foo=bar&hello=world'));
         $curl    = $this->curlFormatter->format($request);
 
         $this->assertContains("-d 'foo=bar&hello=world'", $curl);
@@ -132,7 +124,7 @@ class CurlFormatterTest extends \PHPUnit_Framework_TestCase
 
     public function testProperBodyReading()
     {
-        $request = new Request('PUT', 'example.local', [], Stream::factory('foo=bar&hello=world'));
+        $request = new Request('PUT', 'http://example.local', [], \GuzzleHttp\Psr7\stream_for('foo=bar&hello=world'));
         $request->getBody()->getContents();
 
         $curl    = $this->curlFormatter->format($request);
