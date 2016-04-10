@@ -3,15 +3,13 @@
 namespace Client;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Cookie\CookieJar;
+use GuzzleHttp\Psr7;
+use GuzzleHttp\Psr7\Request;
 use Namshi\Cuzzle\Formatter\CurlFormatter;
 
 class RequestTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var Client
-     */
-    protected $client;
-
     /**
      * @var CurlFormatter
      */
@@ -25,8 +23,9 @@ class RequestTest extends \PHPUnit_Framework_TestCase
 
     public function testGetWithCookies()
     {
-        $request = $this->client->createRequest('GET', 'http://local.example', ['cookies' => ['Foo' => 'Bar', 'identity' => 'xyz']]);
-        $curl    = $this->curlFormatter->format($request);
+        $request = new Request('GET', 'http://local.example');
+        $jar = CookieJar::fromArray(['Foo' => 'Bar', 'identity' => 'xyz'], 'local.example');
+        $curl    = $this->curlFormatter->format($request, ['cookies' => $jar]);
 
         $this->assertNotContains("-H 'Host: local.example'", $curl);
         $this->assertContains("-b 'Foo=Bar; identity=xyz'", $curl);
@@ -34,7 +33,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
 
     public function testPOST()
     {
-        $request = $this->client->createRequest('POST', 'http://local.example', ['body' => ['foo' => 'bar', 'hello' => 'world']]);
+        $request = new Request('POST', 'http://local.example', [], Psr7\stream_for('foo=bar&hello=world'));
         $curl    = $this->curlFormatter->format($request);
 
         $this->assertContains("-d 'foo=bar&hello=world'", $curl);
@@ -42,7 +41,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
 
     public function testPUT()
     {
-        $request = $this->client->createRequest('PUT', 'http://local.example', ['body' => ['foo' => 'bar', 'hello' => 'world']]);
+        $request = new Request('PUT', 'http://local.example', [], Psr7\stream_for('foo=bar&hello=world'));
         $curl    = $this->curlFormatter->format($request);
 
         $this->assertContains("-d 'foo=bar&hello=world'", $curl);
@@ -51,7 +50,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
 
     public function testDELETE()
     {
-        $request = $this->client->createRequest('DELETE', 'http://local.example');
+        $request = new Request('DELETE', 'http://local.example');
         $curl    = $this->curlFormatter->format($request);
 
         $this->assertContains('-X DELETE', $curl);
@@ -59,7 +58,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
 
     public function testHEAD()
     {
-        $request = $this->client->createRequest('HEAD', 'http://local.example');
+        $request = new Request('HEAD', 'http://local.example');
         $curl    = $this->curlFormatter->format($request);
 
         $this->assertContains("curl 'http://local.example' --head", $curl);
@@ -67,7 +66,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
 
     public function testOPTIONS()
     {
-        $request = $this->client->createRequest('OPTIONS', 'http://local.example');
+        $request = new Request('OPTIONS', 'http://local.example');
         $curl    = $this->curlFormatter->format($request);
 
         $this->assertContains('-X OPTIONS', $curl);

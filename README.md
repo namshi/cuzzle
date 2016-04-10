@@ -6,9 +6,9 @@ This library let's you dump a Guzzle request to a cURL command for debug and log
 
 ## Prerequisites
 
-This library needs PHP 5.4+.
+This library needs PHP 5.5+.
 
-It has been tested using PHP5.4 to PHP5.6 and HHVM.
+It has been tested using PHP5.5 to PHP7.0 and HHVM.
 
 ## Installation
 
@@ -26,8 +26,9 @@ use Namshi\Cuzzle\Formatter\CurlFormatter;
 use GuzzleHttp\Message\Request;
 
 $request = new Request('GET', 'example.local');
+$options = [];
 
-echo (new CurlFormatter())->format($request);
+echo (new CurlFormatter())->format($request, $options);
 
 ```
 
@@ -36,7 +37,7 @@ To log the cURL request generated from a Guzzle request, simply add CurlFormatte
 ```php
 
 use GuzzleHttp\Client;
-use Namshi\Cuzzle\Subscriber\CurlFormatterSubscriber;
+use Namshi\Cuzzle\Middleware\CurlFormatterMiddleware;
 use Monolog\Logger;
 use Monolog\Handler\TestHandler;
 
@@ -44,8 +45,9 @@ $logger = new Logger('guzzle.to.curl'); //initialize the logger
 $testHandler = new TestHandler(); //test logger handler
 $logger->pushHandler($testHandler);
 
-$client  = new Client(); //initialize a Guzzle client
-$client->getEmitter()->attach(new CurlFormatterSubscriber($logger)); //add the cURL formatter subscriber
+$handler = $handler = HandlerStack::create();
+$handler->after('cookies', new CurlFormatterMiddleware($logger)); //add the cURL formatter middleware
+$client  = new Client(['handler' => $handler]); //initialize a Guzzle client
 
 $response = $client->get('http://google.com'); //let's fire a request
 

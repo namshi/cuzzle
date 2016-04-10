@@ -2,11 +2,9 @@
 
 namespace Namshi\Cuzzle\Formatter;
 
-use GuzzleHttp\Cookie\CookieJar;
+use GuzzleHttp\Cookie\CookieJarInterface;
 use GuzzleHttp\Cookie\SetCookie;
-use GuzzleHttp\Message\RequestInterface;
-use GuzzleHttp\Subscriber\Cookie;
-use GuzzleHttp\Url;
+use Psr\Http\Message\RequestInterface;
 
 /**
  * Class CurlFormatter it formats a Guzzle request to a cURL shell command
@@ -44,15 +42,16 @@ class CurlFormatter
 
     /**
      * @param RequestInterface $request
+     * @param array            $options
      * @return string
      */
-    public function format(RequestInterface $request)
+    public function format(RequestInterface $request, array $options = [])
     {
         $this->command           = 'curl';
         $this->currentLineLength = strlen($this->command);
         $this->options           = [];
 
-        $this->extractArguments($request);
+        $this->extractArguments($request, $options);
         $this->addOptionsToCommand();
 
         return $this->command;
@@ -119,7 +118,20 @@ class CurlFormatter
      */
     protected function extractBodyArgument(RequestInterface $request)
     {
-        if ($request->getBody() && $contents = (string) $request->getBody()) {
+        $body = $request->getBody();
+
+        if ($body->isSeekable()) {
+            $previousPosition = $body->tell();
+            $body->rewind();
+        }
+
+        $contents = $body->getContents();
+
+        if ($body->isSeekable()) {
+            $body->seek($previousPosition);
+        }
+
+        if ($contents) {
             $this->addOption('d', escapeshellarg($contents));
         }
 
@@ -131,31 +143,30 @@ class CurlFormatter
 
     /**
      * @param RequestInterface $request
+     * @param array            $options
      */
-    protected function extractCookiesArgument(RequestInterface $request)
+    protected function extractCookiesArgument(RequestInterface $request, array $options)
     {
-        $listeners = $request->getEmitter()->listeners('before');
+        if (!isset($options['cookies']) || !$options['cookies'] instanceof CookieJarInterface) {
+            return;
+        }
 
-        foreach ($listeners as $listener) {
-            if ($listener[0] instanceof Cookie) {
-                $values = [];
-                $scheme = $request->getScheme();
-                $host   = $request->getHost();
-                $path   = $request->getPath();
+        $values = [];
+        $scheme = $request->getUri()->getScheme();
+        $host   = $request->getUri()->getHost();
+        $path   = $request->getUri()->getPath();
 
-                /** @var SetCookie $cookie */
-                foreach ($listener[0]->getCookieJar() as $cookie) {
-                    if ($cookie->matchesPath($path) && $cookie->matchesDomain($host) &&
-                        ! $cookie->isExpired() && ( ! $cookie->getSecure() || $scheme == 'https')) {
+        /** @var SetCookie $cookie */
+        foreach ($options['cookies'] as $cookie) {
+            if ($cookie->matchesPath($path) && $cookie->matchesDomain($host) &&
+                ! $cookie->isExpired() && ( ! $cookie->getSecure() || $scheme == 'https')) {
 
-                        $values[] = $cookie->getName() . '=' . CookieJar::getCookieValue($cookie->getValue());
-                    }
-                }
-
-                if ($values) {
-                    $this->addOption('b', escapeshellarg(implode('; ', $values)));
-                }
+                $values[] = $cookie->getName() . '=' . $cookie->getValue();
             }
+        }
+
+        if ($values) {
+            $this->addOption('b', escapeshellarg(implode('; ', $values)));
         }
     }
 
@@ -164,10 +175,8 @@ class CurlFormatter
      */
     protected function extractHeadersArgument(RequestInterface $request)
     {
-        $url = Url::fromString($request->getUrl());
-
         foreach ($request->getHeaders() as $name => $header) {
-            if ('host' === strtolower($name) && $header[0] === $url->getHost()) {
+            if ('host' === strtolower($name) && $header[0] === $request->getUri()->getHost()) {
                 continue;
             }
 
@@ -201,29 +210,25 @@ class CurlFormatter
 
     /**
      * @param RequestInterface $request
+     * @param array            $options
      */
-    protected function extractArguments(RequestInterface $request)
+    protected function extractArguments(RequestInterface $request, array $options)
     {
         $this->extractHttpMethodArgument($request);
         $this->extractBodyArgument($request);
-        $this->extractCookiesArgument($request);
+        $this->extractCookiesArgument($request, $options);
         $this->extractHeadersArgument($request);
         $this->extractUrlArgument($request);
     }
 
     /**
      * @param RequestInterface $request
-     * @return Url
      */
     protected function extractUrlArgument(RequestInterface $request)
     {
-        $url = Url::fromString($request->getUrl());
-        $url->setFragment(null);
+        $uri = $request->getUri();
+        $uri = $uri->withFragment(null);
 
-        if (!$url->getScheme()) {
-            $url = Url::fromString('http://' . (string)$url);
-        }
-
-        $this->addCommandPart(escapeshellarg((string)$url));
+        $this->addCommandPart(escapeshellarg((string)$uri));
     }
 }
