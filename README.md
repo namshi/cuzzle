@@ -14,9 +14,9 @@ It has been tested using PHP5.5 to PHP7.0 and HHVM.
 
 You can install the library directly with composer:
 ```
-"namshi/cuzzle": "0.1.1"
+composer require namshi/cuzzle
 ```
-
+(Add `--dev` if you don't need it in production environment)
 
 ## Usage
 
