@@ -37,6 +37,7 @@ To log the cURL request generated from a Guzzle request, simply add CurlFormatte
 ```php
 
 use GuzzleHttp\Client;
+use GuzzleHttp\HandlerStack;
 use Namshi\Cuzzle\Middleware\CurlFormatterMiddleware;
 use Monolog\Logger;
 use Monolog\Handler\TestHandler;
