@@ -226,8 +226,6 @@ class CurlFormatter
      */
     protected function extractUrlArgument(RequestInterface $request)
     {
-        $uri = $request->getUri();
-
-        $this->addCommandPart(escapeshellarg((string)$uri));
+        $this->addCommandPart(escapeshellarg((string)$request->getUri()->withFragment('')));
     }
 }
