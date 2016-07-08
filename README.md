@@ -46,7 +46,7 @@ $logger = new Logger('guzzle.to.curl'); //initialize the logger
 $testHandler = new TestHandler(); //test logger handler
 $logger->pushHandler($testHandler);
 
-$handler = $handler = HandlerStack::create();
+$handler = HandlerStack::create();
 $handler->after('cookies', new CurlFormatterMiddleware($logger)); //add the cURL formatter middleware
 $client  = new Client(['handler' => $handler]); //initialize a Guzzle client
 
