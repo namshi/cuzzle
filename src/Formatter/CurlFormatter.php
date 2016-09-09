@@ -132,7 +132,7 @@ class CurlFormatter
         }
 
         if ($contents) {
-            $this->addOption('d', escapeshellarg($contents));
+            $this->addOption('d', $this->escapeShellArg($contents));
         }
 
         //if get request has data Add G otherwise curl will make a post request
@@ -166,7 +166,7 @@ class CurlFormatter
         }
 
         if ($values) {
-            $this->addOption('b', escapeshellarg(implode('; ', $values)));
+            $this->addOption('b', $this->escapeShellArg(implode('; ', $values)));
         }
     }
 
@@ -181,12 +181,12 @@ class CurlFormatter
             }
 
             if ('user-agent' === strtolower($name)) {
-                $this->addOption('A', escapeshellarg($header[0]));
+                $this->addOption('A', $this->escapeShellArg($header[0]));
                 continue;
             }
 
             foreach ((array)$header as $headerValue) {
-                $this->addOption('H', escapeshellarg("{$name}: {$headerValue}"));
+                $this->addOption('H', $this->escapeShellArg("{$name}: {$headerValue}"));
             }
         }
     }
@@ -226,6 +226,15 @@ class CurlFormatter
      */
     protected function extractUrlArgument(RequestInterface $request)
     {
-        $this->addCommandPart(escapeshellarg((string)$request->getUri()->withFragment('')));
+        $this->addCommandPart($this->escapeShellArg((string)$request->getUri()->withFragment('')));
+    }
+
+    /**
+     * @param string $argument
+     * @return string
+     */
+    protected function escapeShellArg($argument)
+    {
+        return '\'' . str_replace('\'', '\\\'', $argument) . '\'';
     }
 }
