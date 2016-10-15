@@ -134,19 +134,21 @@ class CurlFormatterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Debug\Exception\FatalErrorException
-     *
      * @dataProvider getHeadersAndBodyData
      */
-    public function testextractBodyArgument($headers, $body)
+    public function testExtractBodyArgument($headers, $body)
     {
+        // clean input of null bytes
+        $body = str_replace(chr(0), '', $body);
         $request = new Request('POST', 'http://example.local/body', $headers, $body);
 
-        $this->curlFormatter->format($request);
+        $curl = $this->curlFormatter->format($request);
+
+        $this->assertContains('-d "the content of body"', $curl);
     }
 
     /**
-     * The data provider for testextractBodyArgument
+     * The data provider for testExtractBodyArgument
      *
      * @return array
      */
