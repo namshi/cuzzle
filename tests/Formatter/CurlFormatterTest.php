@@ -132,4 +132,31 @@ class CurlFormatterTest extends \PHPUnit_Framework_TestCase
         $this->assertContains("-d 'foo=bar&hello=world'", $curl);
         $this->assertContains("-X PUT", $curl);
     }
+
+    /**
+     * @expectedException \Symfony\Component\Debug\Exception\FatalErrorException
+     *
+     * @dataProvider getHeadersAndBodyData
+     */
+    public function testextractBodyArgument($headers, $body)
+    {
+        $request = new Request('POST', 'http://example.local/body', $headers, $body);
+
+        $this->curlFormatter->format($request);
+    }
+
+    /**
+     * The data provider for testextractBodyArgument
+     *
+     * @return array
+     */
+    public function getHeadersAndBodyData()
+    {
+        return [
+            [
+                ['X-Foo' => 'Bar'],
+                chr(0),
+            ],
+        ];
+    }
 }

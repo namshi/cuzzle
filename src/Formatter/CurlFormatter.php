@@ -132,7 +132,7 @@ class CurlFormatter
         }
 
         if ($contents) {
-            // clean input of null bytes 
+            // clean input of null bytes
             $contents = str_replace(chr(0), '', $contents);
             $this->addOption('d', escapeshellarg($contents));
         }
