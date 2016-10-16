@@ -140,11 +140,11 @@ class CurlFormatterTest extends \PHPUnit_Framework_TestCase
     {
         // clean input of null bytes
         $body = str_replace(chr(0), '', $body);
-        $request = new Request('POST', 'http://example.local/body', $headers, $body);
+        $request = new Request('POST', 'http://example.local/body', $headers, \GuzzleHttp\Psr7\stream_for($body));
 
         $curl = $this->curlFormatter->format($request);
 
-        $this->assertContains('-d "the content of body"', $curl);
+        $this->assertContains("-d 'the content of body'", $curl);
     }
 
     /**
