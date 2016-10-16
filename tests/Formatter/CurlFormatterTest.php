@@ -157,7 +157,7 @@ class CurlFormatterTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 ['X-Foo' => 'Bar'],
-                chr(0),
+                chr(0). 'foo=bar&hello=world',
             ],
         ];
     }
