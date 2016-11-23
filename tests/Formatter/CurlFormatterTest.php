@@ -132,4 +132,33 @@ class CurlFormatterTest extends \PHPUnit_Framework_TestCase
         $this->assertContains("-d 'foo=bar&hello=world'", $curl);
         $this->assertContains("-X PUT", $curl);
     }
+
+    /**
+     * @dataProvider getHeadersAndBodyData
+     */
+    public function testExtractBodyArgument($headers, $body)
+    {
+        // clean input of null bytes
+        $body = str_replace(chr(0), '', $body);
+        $request = new Request('POST', 'http://example.local', $headers, \GuzzleHttp\Psr7\stream_for($body));
+
+        $curl = $this->curlFormatter->format($request);
+
+        $this->assertContains('foo=bar&hello=world', $curl);
+    }
+
+    /**
+     * The data provider for testExtractBodyArgument
+     *
+     * @return array
+     */
+    public function getHeadersAndBodyData()
+    {
+        return [
+            [
+                ['X-Foo' => 'Bar'],
+                chr(0). 'foo=bar&hello=world',
+            ],
+        ];
+    }
 }
