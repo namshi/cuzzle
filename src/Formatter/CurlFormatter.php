@@ -5,6 +5,7 @@ namespace Namshi\Cuzzle\Formatter;
 use GuzzleHttp\Cookie\CookieJarInterface;
 use GuzzleHttp\Cookie\SetCookie;
 use Psr\Http\Message\RequestInterface;
+use Symfony\Component\Process\Process;
 
 /**
  * Class CurlFormatter it formats a Guzzle request to a cURL shell command
@@ -134,7 +135,7 @@ class CurlFormatter
         if ($contents) {
             // clean input of null bytes
              $contents = str_replace(chr(0), '', $contents);
-            $this->addOption('d', escapeshellarg($contents));
+            $this->addOption('d', $this->escapeShellArgument($contents));
         }
 
         //if get request has data Add G otherwise curl will make a post request
@@ -168,7 +169,7 @@ class CurlFormatter
         }
 
         if ($values) {
-            $this->addOption('b', escapeshellarg(implode('; ', $values)));
+            $this->addOption('b', $this->escapeShellArgument(implode('; ', $values)));
         }
     }
 
@@ -183,12 +184,12 @@ class CurlFormatter
             }
 
             if ('user-agent' === strtolower($name)) {
-                $this->addOption('A', escapeshellarg($header[0]));
+                $this->addOption('A', $this->escapeShellArgument($header[0]));
                 continue;
             }
 
             foreach ((array)$header as $headerValue) {
-                $this->addOption('H', escapeshellarg("{$name}: {$headerValue}"));
+                $this->addOption('H', $this->escapeShellArgument("{$name}: {$headerValue}"));
             }
         }
     }
@@ -228,6 +229,13 @@ class CurlFormatter
      */
     protected function extractUrlArgument(RequestInterface $request)
     {
-        $this->addCommandPart(escapeshellarg((string)$request->getUri()->withFragment('')));
+        $this->addCommandPart($this->escapeShellArgument((string)$request->getUri()->withFragment('')));
+    }
+
+    protected function escapeShellArgument($argument)
+    {
+        $process = new Process([$argument]);
+        $escaped = $process->getCommandLine();
+        return $escaped;
     }
 }

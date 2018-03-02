@@ -161,4 +161,13 @@ class CurlFormatterTest extends \PHPUnit_Framework_TestCase
             ],
         ];
     }
+
+    public function testLongArgument()
+    {
+        ini_set('memory_limit', -1);
+        $body  = str_repeat('A', 1024*1024*64);
+        $request = new Request('POST', 'http://example.local', [], \GuzzleHttp\Psr7\stream_for($body));
+
+        $curl = $this->curlFormatter->format($request);
+    }
 }
