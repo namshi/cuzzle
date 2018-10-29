@@ -57,6 +57,23 @@ class CurlFormatterTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("curl 'http://example.local' -H 'foo: bar' -H 'Accept-Encoding: gzip,deflate,sdch'", $curl);
     }
 
+    public function testGetWithHeadersAsOptions()
+    {
+        $requestWithHeaders = new Request('GET', 'http://example.local', ['lorem' => 'ipsum']);
+        $curlWithoutOptions = $this->curlFormatter->format($requestWithHeaders);
+
+        $requestWithoutHeaders = new Request('GET', 'http://example.local');
+        $options = ['headers' => ['lorem' => 'ipsum']];
+        $curlWithOptions = $this->curlFormatter->format(
+            $requestWithoutHeaders,
+            $options
+        );
+
+        $this->assertContains("-H 'lorem: ipsum'", $curlWithoutOptions);
+        $this->assertContains("-H 'lorem: ipsum'", $curlWithOptions);
+        $this->assertEquals($curlWithOptions, $curlWithoutOptions);
+    }
+
     public function testGETWithQueryString()
     {
         $request = new Request('GET', 'http://example.local?foo=bar');

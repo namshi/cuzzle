@@ -174,10 +174,15 @@ class CurlFormatter
 
     /**
      * @param RequestInterface $request
+     * @param array            $options
      */
-    protected function extractHeadersArgument(RequestInterface $request)
+    protected function extractHeadersArgument(RequestInterface $request, array $options)
     {
-        foreach ($request->getHeaders() as $name => $header) {
+        $headers = array_merge(
+            $request->getHeaders(),
+            isset($options['headers']) ? $options['headers'] : []
+        );
+        foreach ($headers as $name => $header) {
             if ('host' === strtolower($name) && $header[0] === $request->getUri()->getHost()) {
                 continue;
             }
@@ -219,7 +224,7 @@ class CurlFormatter
         $this->extractHttpMethodArgument($request);
         $this->extractBodyArgument($request);
         $this->extractCookiesArgument($request, $options);
-        $this->extractHeadersArgument($request);
+        $this->extractHeadersArgument($request, $options);
         $this->extractUrlArgument($request);
     }
 
