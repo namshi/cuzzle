@@ -187,8 +187,8 @@ class CurlFormatter
                 continue;
             }
 
-            foreach ((array)$header as $headerValue) {
-                $this->addOption('H', escapeshellarg("{$name}: {$headerValue}"));
+            foreach ((array)$header as $key => $headerValue) {
+                $this->addOption('H', escapeshellarg("{$key}: {$headerValue}"));
             }
         }
     }
