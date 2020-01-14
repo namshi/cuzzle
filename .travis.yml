@@ -9,6 +9,10 @@ php:
   - nightly
   - hhvm
 
+matrix:
+  allow_failures:
+    - php: nightly
+    - php: hhvm
 
 before_script:
   - composer self-update
