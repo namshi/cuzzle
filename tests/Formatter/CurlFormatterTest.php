@@ -122,6 +122,16 @@ class CurlFormatterTest extends \PHPUnit_Framework_TestCase
         $this->assertContains("-X PUT", $curl);
     }
 
+    public function testUserAgent ()
+    {
+        $request = new Request('GET', 'http://example.local', [
+            'user-agent' => 'facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)',
+        ]);
+        $curl = $this->curlFormatter->format($request);
+
+        $this->assertContains("-A 'facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)'", $curl);
+    }
+
     public function testProperBodyReading()
     {
         $request = new Request('PUT', 'http://example.local', [], \GuzzleHttp\Psr7\stream_for('foo=bar&hello=world'));
