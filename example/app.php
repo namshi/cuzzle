@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
+use Namshi\Cuzzle\Middleware\CurlArrayFormatterMiddleware;
 use Namshi\Cuzzle\Middleware\CurlFormatterMiddleware;
 
 $logger = new Logger('guzzele.to.curl'); //initialize the logger
@@ -14,6 +15,7 @@ $logger->pushHandler($testHandler);
 
 $handlerStack = HandlerStack::create();
 $handlerStack->push(new CurlFormatterMiddleware($logger), 'logger');
+//$handlerStack->push(new CurlArrayFormatterMiddleware($logger), 'logger');
 $client = new Client([ 'handler' => $handlerStack ]); //initialize a Guzzle client
 
 $response = $client->get('http://httpbin.org'); //let's fire a request
