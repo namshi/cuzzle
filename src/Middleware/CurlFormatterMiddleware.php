@@ -3,8 +3,8 @@
 namespace Namshi\Cuzzle\Middleware;
 
 use Namshi\Cuzzle\Formatter\CurlFormatter;
-use Psr\Log\LoggerInterface;
 use Psr\Http\Message\RequestInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class CurlFormatterMiddleware middleware
@@ -14,18 +14,19 @@ use Psr\Http\Message\RequestInterface;
  */
 class CurlFormatterMiddleware
 {
-    protected $logger;
+    protected $logger, $level;
 
-    public function __construct(LoggerInterface $logger)
+    public function __construct (LoggerInterface $logger, $level = 'debug')
     {
         $this->logger = $logger;
+        $this->level = $level;
     }
 
-    public function __invoke(callable $handler)
+    public function __invoke (callable $handler)
     {
         return function (RequestInterface $request, array $options) use ($handler) {
             $curlCommand = (new CurlFormatter())->format($request, $options);
-            $this->logger->debug($curlCommand);
+            $this->logger->{$this->level}($curlCommand);
 
             return $handler($request, $options);
         };

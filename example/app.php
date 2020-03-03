@@ -15,7 +15,8 @@ $logger->pushHandler($testHandler);
 
 $handlerStack = HandlerStack::create();
 $handlerStack->push(new CurlFormatterMiddleware($logger), 'logger');
-//$handlerStack->push(new CurlArrayFormatterMiddleware($logger), 'logger');
+//$handlerStack->push(new CurlArrayFormatterMiddleware($logger, 'info'), 'logger');
+//$handlerStack->before('prepare_body', new CurlArrayFormatterMiddleware($logger, 'info'), 'logger');
 $client = new Client([ 'handler' => $handlerStack ]); //initialize a Guzzle client
 
 $response = $client->get('http://httpbin.org'); //let's fire a request

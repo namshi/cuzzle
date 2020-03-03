@@ -14,18 +14,19 @@ use Psr\Log\LoggerInterface;
  */
 class CurlArrayFormatterMiddleware
 {
-    protected $logger;
+    protected $logger, $level;
 
-    public function __construct (LoggerInterface $logger)
+    public function __construct (LoggerInterface $logger, $level = 'debug')
     {
         $this->logger = $logger;
+        $this->level = $level;
     }
 
     public function __invoke (callable $handler)
     {
         return function (RequestInterface $request, array $options) use ($handler) {
-            $curlCommand = (new CurlArrayFormatter())->format($request, $options);
-            $this->logger->debug(json_encode($curlCommand));
+            $curlArray = (new CurlArrayFormatter())->format($request, $options);
+            $this->logger->{$this->level}(json_encode($curlArray));
 
             return $handler($request, $options);
         };
