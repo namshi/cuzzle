@@ -16,6 +16,12 @@ $handlerStack = HandlerStack::create();
 $handlerStack->push(new CurlFormatterMiddleware($logger), 'logger');
 $client = new Client([ 'handler' => $handlerStack ]); //initialize a Guzzle client
 
-$response = $client->get('http://google.com'); //let's fire a request
+$response = $client->get('http://httpbin.org'); //let's fire a request
+/*$response = $client->post('http://httpbin.org/post', [
+	'form_params' => [
+		'a' => 'a',
+		'b' => 'b',
+	]
+]); //let's fire a request*/
 
 var_dump($testHandler->getRecords()); //check the cURL request in the logs :)
