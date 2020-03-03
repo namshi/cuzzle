@@ -7,7 +7,8 @@
         "psr/log": "^1.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^4.2.2"
+        "phpunit/phpunit": "^4.2.2",
+        "monolog/monolog": "^2.0"
     },
     "autoload": {
         "psr-4": {
@@ -23,6 +24,10 @@
         {
             "name": "Nikita Nefedov",
             "email": "inefedor@gmail.com"
+        },
+        {
+            "name": "Syed Sirajul Islam Anik",
+            "email": "sirajul.islam.anik@gmail.com"
         }
     ],
     "extra": {
