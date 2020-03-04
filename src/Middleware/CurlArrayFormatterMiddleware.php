@@ -2,17 +2,17 @@
 
 namespace Namshi\Cuzzle\Middleware;
 
-use Namshi\Cuzzle\Formatter\CurlFormatter;
+use Namshi\Cuzzle\Formatter\CurlArrayFormatter;
 use Psr\Http\Message\RequestInterface;
 use Psr\Log\LoggerInterface;
 
 /**
- * Class CurlFormatterMiddleware middleware
- * it allow to attach the CurlFormatter to a Guzzle Request
+ * Class CurlArrayFormatterMiddleware middleware
+ * it allow to attach the CurlArrayFormatter to a Guzzle Request
  *
  * @package Namshi\Cuzzle\Middleware
  */
-class CurlFormatterMiddleware
+class CurlArrayFormatterMiddleware
 {
     protected $logger, $level;
 
@@ -25,8 +25,8 @@ class CurlFormatterMiddleware
     public function __invoke (callable $handler)
     {
         return function (RequestInterface $request, array $options) use ($handler) {
-            $curlCommand = (new CurlFormatter())->format($request, $options);
-            $this->logger->{$this->level}($curlCommand);
+            $curlArray = (new CurlArrayFormatter())->format($request, $options);
+            $this->logger->{$this->level}(json_encode($curlArray));
 
             return $handler($request, $options);
         };

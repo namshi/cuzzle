@@ -48,6 +48,15 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('-X PUT', $curl);
     }
 
+    public function testPATCH()
+    {
+        $request = new Request('PATCH', 'http://local.example', [], Psr7\stream_for('foo=bar&hello=world'));
+        $curl    = $this->curlFormatter->format($request);
+
+        $this->assertContains("-d 'foo=bar&hello=world'", $curl);
+        $this->assertContains('-X PATCH', $curl);
+    }
+
     public function testDELETE()
     {
         $request = new Request('DELETE', 'http://local.example');
