@@ -1,33 +1,33 @@
 {
-    "name": "namshi/cuzzle",
-    "description": "Get the cURL shell command from a Guzzle request",
-    "require": {
-        "php": ">=5.5.0",
-        "guzzlehttp/guzzle": "^6.0",
-        "psr/log": "^1.0"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^4.2.2"
-    },
-    "autoload": {
-        "psr-4": {
-            "Namshi\\Cuzzle\\": "src/"
-        }
-    },
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "cirpo",
-            "email": "alessandro.cinelli@gmail.com"
-        },
-        {
-            "name": "Nikita Nefedov",
-            "email": "inefedor@gmail.com"
-        }
-    ],
-    "extra": {
-        "branch-alias": {
-            "dev-master": "2.0.x-dev"
-        }
+  "name": "namshi/cuzzle",
+  "description": "Get the cURL shell command from a Guzzle request",
+  "require": {
+    "php": ">=7.2",
+    "guzzlehttp/guzzle": "^6.0",
+    "psr/log": "^1.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.3.8"
+  },
+  "autoload": {
+    "psr-4": {
+      "Namshi\\Cuzzle\\": "src/"
     }
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "cirpo",
+      "email": "alessandro.cinelli@gmail.com"
+    },
+    {
+      "name": "Nikita Nefedov",
+      "email": "inefedor@gmail.com"
+    }
+  ],
+  "extra": {
+    "branch-alias": {
+      "dev-master": "2.0.x-dev"
+    }
+  }
 }
