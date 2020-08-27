@@ -3,14 +3,14 @@
 use Namshi\Cuzzle\Formatter\CurlFormatter;
 use GuzzleHttp\Psr7\Request;
 
-class CurlFormatterTest extends \PHPUnit_Framework_TestCase
+class CurlFormatterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var CurlFormatter
      */
     protected $curlFormatter;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->curlFormatter = new CurlFormatter();
     }
@@ -71,11 +71,10 @@ class CurlFormatterTest extends \PHPUnit_Framework_TestCase
 
         $body = \GuzzleHttp\Psr7\stream_for(http_build_query(['foo' => 'bar', 'hello' => 'world'], '', '&'));
 
-        $request = new Request('GET', 'http://example.local',[],$body);
+        $request = new Request('GET', 'http://example.local', [], $body);
         $curl    = $this->curlFormatter->format($request);
 
-        $this->assertEquals("curl 'http://example.local' -G  -d 'foo=bar&hello=world'",$curl);
-
+        $this->assertEquals("curl 'http://example.local' -G  -d 'foo=bar&hello=world'", $curl);
     }
 
     public function testPOST()
@@ -85,8 +84,8 @@ class CurlFormatterTest extends \PHPUnit_Framework_TestCase
         $request = new Request('POST', 'http://example.local', [], $body);
         $curl    = $this->curlFormatter->format($request);
 
-        $this->assertContains("-d 'foo=bar&hello=world'", $curl);
-        $this->assertNotContains(" -G ", $curl);
+        $this->assertStringContainsString("-d 'foo=bar&hello=world'", $curl);
+        $this->assertStringNotContainsString(" -G ", $curl);
     }
 
     public function testHEAD()
@@ -94,7 +93,7 @@ class CurlFormatterTest extends \PHPUnit_Framework_TestCase
         $request = new Request('HEAD', 'http://example.local');
         $curl    = $this->curlFormatter->format($request);
 
-        $this->assertContains("--head", $curl);
+        $this->assertStringContainsString("--head", $curl);
     }
 
     public function testOPTIONS()
@@ -102,7 +101,7 @@ class CurlFormatterTest extends \PHPUnit_Framework_TestCase
         $request = new Request('OPTIONS', 'http://example.local');
         $curl    = $this->curlFormatter->format($request);
 
-        $this->assertContains("-X OPTIONS", $curl);
+        $this->assertStringContainsString("-X OPTIONS", $curl);
     }
 
     public function testDELETE()
@@ -110,7 +109,7 @@ class CurlFormatterTest extends \PHPUnit_Framework_TestCase
         $request = new Request('DELETE', 'http://example.local/users/4');
         $curl    = $this->curlFormatter->format($request);
 
-        $this->assertContains("-X DELETE", $curl);
+        $this->assertStringContainsString("-X DELETE", $curl);
     }
 
     public function testPUT()
@@ -118,8 +117,8 @@ class CurlFormatterTest extends \PHPUnit_Framework_TestCase
         $request = new Request('PUT', 'http://example.local', [], \GuzzleHttp\Psr7\stream_for('foo=bar&hello=world'));
         $curl    = $this->curlFormatter->format($request);
 
-        $this->assertContains("-d 'foo=bar&hello=world'", $curl);
-        $this->assertContains("-X PUT", $curl);
+        $this->assertStringContainsString("-d 'foo=bar&hello=world'", $curl);
+        $this->assertStringContainsString("-X PUT", $curl);
     }
 
     public function testProperBodyReading()
@@ -129,8 +128,8 @@ class CurlFormatterTest extends \PHPUnit_Framework_TestCase
 
         $curl    = $this->curlFormatter->format($request);
 
-        $this->assertContains("-d 'foo=bar&hello=world'", $curl);
-        $this->assertContains("-X PUT", $curl);
+        $this->assertStringContainsString("-d 'foo=bar&hello=world'", $curl);
+        $this->assertStringContainsString("-X PUT", $curl);
     }
 
     /**
@@ -144,7 +143,7 @@ class CurlFormatterTest extends \PHPUnit_Framework_TestCase
 
         $curl = $this->curlFormatter->format($request);
 
-        $this->assertContains('foo=bar&hello=world', $curl);
+        $this->assertStringContainsString('foo=bar&hello=world', $curl);
     }
 
     /**
@@ -157,7 +156,7 @@ class CurlFormatterTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 ['X-Foo' => 'Bar'],
-                chr(0). 'foo=bar&hello=world',
+                chr(0) . 'foo=bar&hello=world',
             ],
         ];
     }
