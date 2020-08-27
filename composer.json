@@ -2,7 +2,7 @@
   "name": "namshi/cuzzle",
   "description": "Get the cURL shell command from a Guzzle request",
   "require": {
-    "php": ">=7.2",
+    "php": ">=7.3",
     "guzzlehttp/guzzle": "^6.0",
     "psr/log": "^1.0"
   },
