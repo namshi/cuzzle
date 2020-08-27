@@ -3,6 +3,13 @@ language: php
 php:
   - 7.3
   - 7.4
+  - nightly
+  - hhvm
+
+matrix:
+  allow_failures:
+    - php: nightly
+    - php: hhvm
 
 before_script:
   - composer self-update
