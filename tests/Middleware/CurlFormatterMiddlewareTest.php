@@ -12,7 +12,7 @@ class CurlFormatterMiddlewareTest extends \PHPUnit_Framework_TestCase
     {
         $mock = new MockHandler([new Response(204)]);
         $handler = HandlerStack::create($mock);
-        $logger = $this->getMock(\Psr\Log\LoggerInterface::class);
+        $logger = $this->createMock(\Psr\Log\LoggerInterface::class);
 
         $logger
             ->expects($this->once())
