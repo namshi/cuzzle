@@ -5,14 +5,15 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Handler\MockHandler;
 use Namshi\Cuzzle\Middleware\CurlFormatterMiddleware;
+use PHPUnit\Framework\TestCase;
 
-class CurlFormatterMiddlewareTest extends \PHPUnit_Framework_TestCase
+class CurlFormatterMiddlewareTest extends TestCase
 {
     public function testGet()
     {
         $mock = new MockHandler([new Response(204)]);
         $handler = HandlerStack::create($mock);
-        $logger = $this->getMock(\Psr\Log\LoggerInterface::class);
+        $logger = $this->getMockForAbstractClass(\Psr\Log\LoggerInterface::class);
 
         $logger
             ->expects($this->once())
