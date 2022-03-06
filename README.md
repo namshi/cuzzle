@@ -2,20 +2,22 @@
 
 [![Build Status](https://travis-ci.org/namshi/cuzzle.svg?branch=master)](https://travis-ci.org/namshi/cuzzle)
 
-This library let's you dump a Guzzle request to a cURL command for debug and log purpose.
+This library lets you dump a Guzzle request to a cURL command for debug and log purpose.
 
 ## Prerequisites
 
-This library needs PHP 5.5+.
+This library needs PHP 7.3+.
 
-It has been tested using PHP5.5 to PHP7.0 and HHVM.
+It has been tested using PHP7.3 to PHP7.4
 
 ## Installation
 
 You can install the library directly with composer:
+
 ```
 composer require namshi/cuzzle
 ```
+
 (Add `--dev` if you don't need it in production environment)
 
 ## Usage
@@ -52,7 +54,7 @@ $client  = new Client(['handler' => $handler]); //initialize a Guzzle client
 
 $response = $client->get('http://google.com'); //let's fire a request
 
-var_dump($testHandler->getRecords()); //check the cURL request in the logs, 
+var_dump($testHandler->getRecords()); //check the cURL request in the logs,
 //you should see something like: "curl 'http://google.com' -H 'User-Agent: Guzzle/4.2.1 curl/7.37.1 PHP/5.5.16"
 
 ```
